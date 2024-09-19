@@ -1,5 +1,5 @@
 import { Sequelize, DataTypes } from "sequelize";
-import configFile from "../config/config.json";
+import configFile from "../config/config.json" assert { type: "json" };
 const config = configFile[process.env.NODE_ENV || "development"];
 const sequelize = new Sequelize(
   config.database,
@@ -14,13 +14,9 @@ const User = sequelize.define("User", {
     primaryKey: true,
     allowNull: false,
   },
-  name: {
+  userName: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
-  position: {
-    type: DataTypes.STRING,
-    allowNull: true,
   },
   email: {
     type: DataTypes.STRING,
@@ -43,7 +39,5 @@ const User = sequelize.define("User", {
     defaultValue: "active",
   },
 });
-
-User.sync({ force: true });
-
+User.sync();
 export default User;

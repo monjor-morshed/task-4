@@ -7,12 +7,6 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 import db from "./models/userModel.js";
 
-db.then(() => {
-  console.log("Database connected");
-  app.listen(5000, () => {
-    console.log(`Server is running on port 5000`);
-  });
-});
 const app = express();
 
 app.use(express.json());
@@ -31,3 +25,16 @@ app.use((err, req, res, next) => {
     statusCode,
   });
 });
+
+db.sequelize
+  .authenticate()
+  .then(() => {
+    console.log("Database connected");
+
+    app.listen(5000, () => {
+      console.log(`Server is running on port 5000`);
+    });
+  })
+  .catch((err) => {
+    console.error("Unable to connect to the database:", err);
+  });

@@ -1,23 +1,23 @@
 {
   "development": {
-    "username": "process.env.USERNAME",
-    "password": "process.env.PASSWORD",
-    "database": "process.env.DATABASE",
-    "host": "process.env.HOST",
+    "username": "root",
+    "password": "Important2539Adib.",
+    "database": "task_3",
+    "host": "localhost",
     "dialect": "mysql"
   },
   "test": {
-    "username": "process.env.USERNAME",
-    "password": "process.env.PASSWORD",
-    "database": "process.env.DATABASE",
-    "host": "process.env.HOST",
+    "username": "root",
+    "password": "Important2539Adib.",
+    "database": "task_3",
+    "host": "localhost",
     "dialect": "mysql"
   },
   "production": {
-    "username": "process.env.USERNAME",
-    "password": "process.env.PASSWORD",
-    "database": "process.env.DATABASE",
-    "host": "process.env.HOST",
+    "username": "root",
+    "password": "Important2539Adib.",
+    "database": "task_3",
+    "host": "localhost",
     "dialect": "mysql"
   }
 }
