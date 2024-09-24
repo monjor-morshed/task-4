@@ -9,7 +9,12 @@ export const signup = async (req, res, next) => {
   if (existingUser) {
     return next(errorHandler(400, "User already exists"));
   }
-  const newUser = new User({ userName, email, password: hashedPassword });
+  const newUser = new User({
+    userName,
+    email,
+    password: hashedPassword,
+    registrationTime: new Date(),
+  });
   try {
     await newUser.save();
     res.status(201).json({
@@ -19,6 +24,7 @@ export const signup = async (req, res, next) => {
     next(error);
   }
 };
+
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -27,16 +33,14 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(404, "User not found"));
     }
     if (validUser.status === "blocked") {
-      return next(errorHandler(404, "User Bolcked"));
+      return next(errorHandler(404, "User Blocked"));
     }
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) {
       return next(errorHandler(401, "Invalid credentials"));
     }
-    await User.update(
-      { lastLogin: validUser.regestrationTime, regestrationTime: new Date() },
-      { where: { email: email } }
-    );
+
+    await User.update({ lastLogin: new Date() }, { where: { email: email } });
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
     const expiryDate = new Date(Date.now() + 3600000);
     res
@@ -54,6 +58,7 @@ export const signin = async (req, res, next) => {
     next(error);
   }
 };
+
 export const signout = (req, res) => {
   res.clearCookie("access_token").json("Signout success!");
 };

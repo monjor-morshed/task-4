@@ -30,14 +30,14 @@ const User = sequelize.define("User", {
   lastLogin: {
     type: DataTypes.DATE,
   },
-  regestrationTime: {
+  registrationTime: {
     type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW,
+    allowNull: false,
   },
   status: {
     type: DataTypes.ENUM("active", "blocked"),
     defaultValue: "active",
   },
 });
-User.sync();
+User.sync({ force: true });
 export default User;
