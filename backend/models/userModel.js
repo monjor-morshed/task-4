@@ -1,11 +1,12 @@
 import { Sequelize, DataTypes } from "sequelize";
-import configFile from "../config/config.json" assert { type: "json" };
-const config = configFile[process.env.NODE_ENV || "development"];
 const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  config
+  MYSQL_ADDON_DB,
+  MYSQL_ADDON_USER,
+  MYSQL_ADDON_PASSWORD,
+  {
+    host: MYSQL_ADDON_HOST,
+    dialect: "mysql",
+  }
 );
 const User = sequelize.define("User", {
   id: {
@@ -39,5 +40,5 @@ const User = sequelize.define("User", {
     defaultValue: "active",
   },
 });
-User.sync({ force: true });
+User.sync({});
 export default User;
