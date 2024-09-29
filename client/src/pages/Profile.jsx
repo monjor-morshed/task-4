@@ -15,7 +15,7 @@ import { FaLock, FaUnlock, FaTrash } from "react-icons/fa";
 const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentUser, loading, error } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const [users, setUsers] = useState([]);
   const [checkedUsers, setCheckedUsers] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -24,7 +24,6 @@ const Profile = () => {
     if (!currentUser) {
       navigate("/sign-in");
     }
-
     fetchUsers();
   }, [currentUser, navigate]);
 
@@ -70,11 +69,12 @@ const Profile = () => {
       }
 
       dispatch(updateUserSuccess());
-      setCheckedUsers([]);
-      setSelectAll(false);
-      fetchUsers();
     } catch (error) {
       dispatch(updateUserFailure(error));
+    } finally {
+      setCheckedUsers([]);
+      setSelectAll(false);
+      await fetchUsers();
     }
   };
 
@@ -96,6 +96,7 @@ const Profile = () => {
         dispatch(deleteUserFailure(data));
         return;
       }
+
       if (checkedUsers.includes(currentUser.id)) {
         await fetch("/api/auth/signout");
         dispatch(signOut());
@@ -104,11 +105,12 @@ const Profile = () => {
       }
 
       dispatch(deleteUserSuccess());
-      setCheckedUsers([]);
-      setSelectAll(false);
-      fetchUsers();
     } catch (error) {
       dispatch(deleteUserFailure(error));
+    } finally {
+      setCheckedUsers([]);
+      setSelectAll(false);
+      await fetchUsers();
     }
   };
 
@@ -130,99 +132,74 @@ const Profile = () => {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex justify-end gap-4 mb-4">
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">User Profile</h1>
+      <div className="flex justify-between mb-4">
         <button
-          onClick={() => handleUpdateStatus("block")}
-          className="flex items-center gap-2 rounded-md bg-red-50 px-5 py-2 shadow-md hover:bg-red-100"
-        >
-          <FaLock className="text-2xl text-red-600" /> Block
-        </button>
-        <button
-          onClick={() => handleUpdateStatus("unblock")}
-          className="flex items-center gap-2 rounded-md bg-green-50 px-5 py-2 shadow-md hover:bg-green-100"
-        >
-          <FaUnlock className="text-2xl text-green-700" /> Unblock
-        </button>
-        <button
+          className="bg-red-500 text-white px-4 py-2 rounded"
           onClick={handleDeleteUsers}
-          className="flex items-center gap-2 rounded-md bg-red-50 px-5 py-2 shadow-md hover:bg-red-100"
         >
-          <FaTrash className="text-2xl text-red-600" /> Delete
+          <FaTrash className="inline mr-2" /> Delete
+        </button>
+        <button
+          className="bg-yellow-500 text-white px-4 py-2 rounded"
+          onClick={() => handleUpdateStatus("block")}
+        >
+          <FaLock className="inline mr-2" /> Block
+        </button>
+        <button
+          className="bg-green-500 text-white px-4 py-2 rounded"
+          onClick={() => handleUpdateStatus("unblock")}
+        >
+          <FaUnlock className="inline mr-2" /> Unblock
         </button>
       </div>
-
-      <div className="h-full w-full rounded-sm border border-gray-300">
-        <div className="grid grid-cols-6 items-center divide-x divide-gray-300 border-b text-center">
-          <label className="flex items-center justify-center">
-            <input
-              type="checkbox"
-              className="h-5 w-5"
-              checked={selectAll}
-              onChange={handleSelectAll}
-            />
-          </label>
-          <div>
-            <h1 className="font-semibold capitalize">Name</h1>
-          </div>
-          <div className="font-semibold">Email</div>
-          <div className="font-semibold">Last Login</div>
-          <div className="font-semibold">Registration Time</div>
-          <div className="font-semibold">Status</div>
-        </div>
-
-        {users.length > 0 ? (
-          users.map((user) => (
-            <div
-              key={user.id}
-              className={`grid grid-cols-6 items-center divide-x divide-gray-300 border-b ${
-                user.status === "blocked" ? "bg-gray-200" : ""
-              }`}
-            >
-              <label className="flex items-center justify-center">
+      <table className="min-w-full bg-white">
+        <thead>
+          <tr>
+            <th className="py-2">
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={handleSelectAll}
+              />
+            </th>
+            <th className="py-2">Name</th>
+            <th className="py-2">Email</th>
+            <th className="py-2">Last Login</th>
+            <th className="py-2">Registration Time</th>
+            <th className="py-2">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td className="py-2">
                 <input
                   type="checkbox"
-                  className="h-5 w-5"
                   checked={checkedUsers.includes(user.id)}
                   onChange={() => handleCheckboxChange(user.id)}
                 />
-              </label>
-              <div>
-                <h1
-                  className={`${
-                    user.id === currentUser.id ? "font-bold" : "font-medium"
-                  } capitalize`}
-                >
-                  {user.userName}
-                </h1>
-              </div>
-              <div>{user.email}</div>
-              <div>
-                {user.lastLogin ? (
-                  <div>{new Date(user.lastLogin).toLocaleString()}</div>
+              </td>
+              <td className="py-2">
+                {user.id === currentUser.id ? (
+                  <b className="font-semibold">{user.userName}</b>
                 ) : (
-                  <div>No recent login information</div>
+                  user.userName
                 )}
-              </div>
-              <div>{new Date(user.registrationTime).toLocaleString()}</div>
-
-              <div className="px-3 items-center justify-center">
-                <span
-                  className={`rounded-md px-2 py capitalize text ${
-                    user.status === "active"
-                      ? "bg-green-600 text-green-100"
-                      : "bg-red-600 text-red-100"
-                  }`}
-                >
-                  {user.status}
-                </span>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center p-4">No users found.</div>
-        )}
-      </div>
+              </td>
+              <td className="py-2">{user.email}</td>
+              <td className="py-2">
+                {new Date(user.lastLogin).toLocaleString()}
+              </td>
+              <td className="py-2">
+                {new Date(user.registrationTime).toLocaleString()}
+              </td>
+              <td className="py-2">{user.status}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
