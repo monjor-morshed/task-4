@@ -6,6 +6,7 @@ const sequelize = new Sequelize(
   {
     host: "blmlq2chfnycylmfnd2m-mysql.services.clever-cloud.com",
     dialect: "mysql",
+    port: 3306,
   }
 );
 const User = sequelize.define("User", {
