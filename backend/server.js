@@ -6,7 +6,9 @@ import authRoutes from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
 dotenv.config();
 import db from "./models/userModel.js";
+import path from "path";
 
+const __dirname = path.resolve();
 const app = express();
 
 app.use(express.json());
@@ -15,6 +17,11 @@ app.use(cors());
 
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use(express.static(path.join(__dirname, "/client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "/client/dist/index.html"));
+});
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
