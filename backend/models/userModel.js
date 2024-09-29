@@ -1,10 +1,10 @@
 import { Sequelize, DataTypes } from "sequelize";
 const sequelize = new Sequelize(
-  MYSQL_ADDON_DB,
-  MYSQL_ADDON_USER,
-  MYSQL_ADDON_PASSWORD,
+  "blmlq2chfnycylmfnd2m",
+  "ut8xpdqb0yga0omf",
+  "KKS2BFKj8LGrUvaqg58K",
   {
-    host: MYSQL_ADDON_HOST,
+    host: "blmlq2chfnycylmfnd2m-mysql.services.clever-cloud.com",
     dialect: "mysql",
   }
 );
